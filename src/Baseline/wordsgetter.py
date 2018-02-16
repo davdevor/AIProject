@@ -23,4 +23,8 @@ r = requests.get("https://od-api.oxforddictionaries.com:443/api/v1/wordlist/en/l
 jsonfile = open('adjectives.json','w')
 json.dump(r.json(),jsonfile)
 jsonfile.close()
-input("enter")
+
+r = requests.get("https://od-api.oxforddictionaries.com:443/api/v1/wordlist/en/lexicalCategory%3Dpronoun", headers = {'app_id': app_id, 'app_key': app_key})
+jsonfile = open('pronouns.json','w')
+json.dump(r.json(),jsonfile)
+jsonfile.close()
