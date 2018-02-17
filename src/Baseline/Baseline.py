@@ -2,6 +2,8 @@ import json
 import random
 class SS():
     def __init__(self):
+        self.atomic = ['Noun','Verb','Pronoun','Adjective']
+
         self.prod = {'Noun':[],
                      'Verb':[],
                      'Adjective':[],
@@ -43,12 +45,17 @@ class SS():
     def addProd(self,lhs,rhs):
         self.prod[lhs] = rhs.split('|')
 
-    def generateSentence(self):
-        c = random.choice(self.prod['S'])
+    def generateSentence(self,part):
+        if(part in self.atomic):
+            return random.choice(self.prod[part])
+        c = random.choice(self.prod[part])
         c = c.split(" ")
-        return
+        s= ''
+        for x in c:
+            s = s + self.generateSentence(x)+ " "
+        return s
 
 def main():
     x =  SS()
-    x.generateSentence()
+    print(x.generateSentence('S'))
 main()
