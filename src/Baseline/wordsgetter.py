@@ -28,3 +28,13 @@ r = requests.get("https://od-api.oxforddictionaries.com:443/api/v1/wordlist/en/l
 jsonfile = open('pronouns.json','w')
 json.dump(r.json(),jsonfile)
 jsonfile.close()
+
+r = requests.get("https://od-api.oxforddictionaries.com:443/api/v1/wordlist/en/lexicalCategory%3Dadverb", headers = {'app_id': app_id, 'app_key': app_key})
+jsonfile = open('adverbs.json','w')
+json.dump(r.json(),jsonfile)
+jsonfile.close
+
+r = requests.get("https://od-api.oxforddictionaries.com:443/api/v1/wordlist/en/lexicalCategory%3Ddeterminer", headers = {'app_id': app_id, 'app_key': app_key})
+jsonfile = open('articles.json','w')
+json.dump(r.json(),jsonfile)
+jsonfile.close()
