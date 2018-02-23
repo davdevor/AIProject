@@ -3,7 +3,7 @@ import random
 class SS():
     def __init__(self):
         #the atmoic productions they do not break down  further
-        self.atomic = ['Noun','Verb','Pronoun','Adjective','Article','Adverb']
+        self.atomic = ['Noun','Verb','Pronoun','Adjective','Article','Adverb','Preposition']
 
         #the dictionary to store the sentence structure
         self.prod = {'Noun':[],
@@ -11,11 +11,13 @@ class SS():
                      'Adjective':[],
                      'Pronoun':[],
                      'Article':[],
-                     'Adverb':[]}
+                     'Adverb':[],
+                     'Preposition':[]}
         #add to the dictionary the sentence structure
         self.addProd('S','NP VP')
-        self.addProd('NP', 'Pronoun|Noun|Article Noun')
+        self.addProd('NP', 'Pronoun|Noun|Article Noun|NP PP')
         self.addProd('VP', 'Verb|VP NP|VP Adjective|VP Adverb')
+        self.addProd('PP', 'Preposition NP')
         self.readWords()
 
     #this method reads the the json files and fills the lists in the prod dictionary
@@ -60,6 +62,13 @@ class SS():
         words= words['results']
         for x in words:
             self.prod['Article'].append(x['word'])
+        file.close()
+
+        file = open('prepositions.json', mode='r',encoding = 'UTF-8')
+        words = json.load(file)
+        words= words['results']
+        for x in words:
+            self.prod['Preposition'].append(x['word'])
         file.close()
 
     def addProd(self,lhs,rhs):
