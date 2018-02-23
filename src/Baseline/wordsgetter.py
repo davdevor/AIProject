@@ -38,3 +38,8 @@ r = requests.get("https://od-api.oxforddictionaries.com:443/api/v1/wordlist/en/l
 jsonfile = open('articles.json','w')
 json.dump(r.json(),jsonfile)
 jsonfile.close()
+
+r = requests.get("https://od-api.oxforddictionaries.com:443/api/v1/wordlist/en/lexicalCategory%3DPrepostion", headers = {'app_id': app_id, 'app_key': app_key})
+jsonfile = open('prepostions.json','w')
+json.dump(r.json(),jsonfile)
+jsonfile.close()
