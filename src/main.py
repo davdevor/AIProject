@@ -36,8 +36,8 @@ dictionary, reverse_dictionary = build_dataset(training_data)
 vocab_size = len(dictionary)
 
 learning_rate = 0.001
-training_steps = 200
-display_step = 100
+training_steps = 50000
+display_step = 1000
 
 input_size = 3
 hidden_layers = 512
