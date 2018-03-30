@@ -57,7 +57,7 @@ vocab_size = len(dictionary)
 
 # Parameters
 learning_rate = 0.001
-training_iters = 10000
+training_iters = 100
 display_step = 1000
 n_input = 3
 
@@ -80,6 +80,7 @@ def RNN(x, weights, biases):
 
     # reshape to [1, n_input]
     x = tf.reshape(x, [-1, n_input])
+    
 
     # Generate a n_input-element sequence of inputs
     # (eg. [had] [a] [general] -> [20] [6] [33])
