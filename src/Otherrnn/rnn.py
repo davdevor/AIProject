@@ -86,8 +86,8 @@ def run_step(x, num_layers, lstm_size,lstm_last_state,final_outputs, lstm_new_st
 def main():
     TEST_PREFIX = 'The'
     ckpt_file = "saved/model.ckpt"
-    data, vocab = load_data('poetry-small.txt')
-    train = True
+    data, vocab = load_data('poetry.txt')
+    train = False
     in_size = out_size = len(vocab)
     lstm_size = 256
     num_layers = 2
