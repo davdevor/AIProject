@@ -73,15 +73,13 @@ def embed_to_vocab(data_, vocab):
     cnt = 0
     for s in data_:
         v = [0.0] * len(vocab)
+        # get the position of the character stored in s in vocab and put a 1 in that smae postion in v
         v[vocab.index(s)] = 1.0
+        # store v in the right place in data
         data[cnt, :] = v
         cnt += 1
+    # data contains the onehot encoding
     return data
-
-
-def decode_embed(array, vocab):
-    return vocab[array.index(1)]
-
 
 def load_data(input):
     # Load the data
@@ -90,6 +88,7 @@ def load_data(input):
         data_ += f.read()
     data_ = data_.lower()
     # Convert to 1-hot coding
+    # vocab is a set of all the characters from the file
     vocab = sorted(list(set(data_)))
     data = embed_to_vocab(data_, vocab)
     return data, vocab
