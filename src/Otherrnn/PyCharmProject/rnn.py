@@ -64,12 +64,9 @@ def train_batch(session, cost, train_op, xinput, y_batch, lstm_init_value, xbatc
 
 
 def embed_to_vocab(data_, vocab):
-    """
-    Embed string to character-arrays -- it generates an array len(data)
-    x len(vocab).
 
-    Vocab is a list of elements.
-    """
+    # Embed string to character-arrays -- it generates an array len(data) x len(vocab).
+    # Vocab is a list of elements.
     l1 = len(data_)
     l2 = len(vocab)
     data = np.zeros((l1, l2))
@@ -118,7 +115,7 @@ def run_step(x, num_layers, lstm_size,lstm_last_state,final_outputs, lstm_new_st
 
 def main():
     # the first word of every test
-    TEST_PREFIX = 'The'
+    test_prefix = 'the'
     # the save file
     ckpt_file = "saved/model.ckpt"
     data, vocab = load_data('poetry.txt')
@@ -130,9 +127,9 @@ def main():
     num_layers = 2
     batch_size = 64
     time_steps = 100
-    NUM_TRAIN_BATCHES = 20000
+    training_batches = 20000
     # Number of test characters of text to generate after training the network
-    LEN_TEST_TEXT = 500
+    test_length = 500
 
     # Initialize the network
     config = tf.ConfigProto()
@@ -151,7 +148,7 @@ def main():
         batch_y = np.zeros((batch_size, time_steps, in_size))
         possible_batch_ids = range(data.shape[0] - time_steps - 1)
 
-        for i in range(NUM_TRAIN_BATCHES):
+        for i in range(training_batches):
             # Sample time_steps consecutive samples from the data set text file
             batch_id = random.sample(possible_batch_ids, batch_size)
 
@@ -171,22 +168,30 @@ def main():
                 print("batch: {}  loss: {}  speed: {} batches / s".format(i, cst, 100 / diff))
                 saver.save(sess, ckpt_file)
     else:
-        # 2) GENERATE LEN_TEST_TEXT CHARACTERS USING THE TRAINED NETWORK
+        # restore session with save tensorflow variables
         saver.restore(sess, ckpt_file)
+
         for x in range(3):
-            TEST_PREFIX = TEST_PREFIX.lower()
-            for i in range(len(TEST_PREFIX)):
-                out, lstm_last_state = run_step(embed_to_vocab(TEST_PREFIX[i], vocab), num_layers,lstm_size,lstm_last_state,final_outputs,lstm_new_state,xinput,lstm_init_value,sess,i == 0)
+            test_prefix = test_prefix.lower()
+            # run each character of the the test_prefix through the nn
+            # this is done to start the generation, you need to give it a starting point
+            for i in range(len(test_prefix)):
+                out, lstm_last_state = run_step(embed_to_vocab(test_prefix[i], vocab), num_layers,lstm_size,lstm_last_state,final_outputs,lstm_new_state,xinput,lstm_init_value,sess,i == 0)
 
             print("poem:")
-            gen_str = TEST_PREFIX
-            for i in range(LEN_TEST_TEXT):
+            gen_str = test_prefix
+            for i in range(test_length):
                 # Sample character from the network according to the generated
-                # output probabilities.
+                # p is the list of probabilities that correspond to each position in vocab
+                # p is set to out because out is the probabilities from the nn
                 element = np.random.choice(range(len(vocab)), p=out)
+                # add the choice to the string
+                # the choice is one character from the vocab
                 gen_str += vocab[element]
+                # give the choice to the nn to run again
                 out, lstm_last_state = run_step(embed_to_vocab(vocab[element], vocab), num_layers,lstm_size,lstm_last_state,final_outputs,lstm_new_state,xinput,lstm_init_value,sess, False)
 
+            # the final output string
             print(gen_str)
 
 
