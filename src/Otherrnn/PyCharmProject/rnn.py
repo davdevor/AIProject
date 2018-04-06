@@ -100,7 +100,7 @@ def load_data(input):
 
 # Input: X is a single element, not a list!
 def run_step(x, num_layers, lstm_size,lstm_last_state,final_outputs, lstm_new_state, xinput, lstm_init_value,session, init_zero_state=True):
-    # Reset the initial state of the network.
+    # Reset the initial state of the network if generating new string
     if init_zero_state:
         init_value = np.zeros((num_layers * 2 * lstm_size,))
     else:
@@ -111,6 +111,7 @@ def run_step(x, num_layers, lstm_size,lstm_last_state,final_outputs, lstm_new_st
             lstm_init_value: [init_value]
         }
     )
+    # update last state to use in next run of nn
     lstm_last_state = next_lstm_state[0]
     return out[0][0], lstm_last_state
 
@@ -172,20 +173,21 @@ def main():
     else:
         # 2) GENERATE LEN_TEST_TEXT CHARACTERS USING THE TRAINED NETWORK
         saver.restore(sess, ckpt_file)
-        TEST_PREFIX = TEST_PREFIX.lower()
-        for i in range(len(TEST_PREFIX)):
-            out, lstm_last_state = run_step(embed_to_vocab(TEST_PREFIX[i], vocab), num_layers,lstm_size,lstm_last_state,final_outputs,lstm_new_state,xinput,lstm_init_value,sess,i == 0)
+        for x in range(3):
+            TEST_PREFIX = TEST_PREFIX.lower()
+            for i in range(len(TEST_PREFIX)):
+                out, lstm_last_state = run_step(embed_to_vocab(TEST_PREFIX[i], vocab), num_layers,lstm_size,lstm_last_state,final_outputs,lstm_new_state,xinput,lstm_init_value,sess,i == 0)
 
-        print("Sentence:")
-        gen_str = TEST_PREFIX
-        for i in range(LEN_TEST_TEXT):
-            # Sample character from the network according to the generated
-            # output probabilities.
-            element = np.random.choice(range(len(vocab)), p=out)
-            gen_str += vocab[element]
-            out, lstm_last_state = run_step(embed_to_vocab(vocab[element], vocab), num_layers,lstm_size,lstm_last_state,final_outputs,lstm_new_state,xinput,lstm_init_value,sess, False)
+            print("poem:")
+            gen_str = TEST_PREFIX
+            for i in range(LEN_TEST_TEXT):
+                # Sample character from the network according to the generated
+                # output probabilities.
+                element = np.random.choice(range(len(vocab)), p=out)
+                gen_str += vocab[element]
+                out, lstm_last_state = run_step(embed_to_vocab(vocab[element], vocab), num_layers,lstm_size,lstm_last_state,final_outputs,lstm_new_state,xinput,lstm_init_value,sess, False)
 
-        print(gen_str)
+            print(gen_str)
 
 
 main()
