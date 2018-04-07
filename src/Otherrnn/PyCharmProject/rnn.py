@@ -20,7 +20,7 @@ def build_rnn(in_size, lstm_size, num_layers, out_size, learning_rate=0.001):
         lstm_cells = []
         for i in range(num_layers):
             # creates a lstm cell and appends to lstm_cells the cell holds a number of cells equal to lstm_size
-            lstm_cells.append(tf.contrib.rnn.BasicLSTMCell(lstm_size, forget_bias=1.0, state_is_tuple=False))
+            lstm_cells.append(tf.contrib.rnn.BasicLSTMCell(lstm_size, forget_bias=1.0, state_is_tuple=False)) #state is tuple false will soon be deprecated
 
         # create a RNN cell composed sequentially of a number of RNNCells
         lstm = tf.contrib.rnn.MultiRNNCell(lstm_cells, state_is_tuple=False)
@@ -128,12 +128,10 @@ def main():
     time_steps = 100
     training_batches = 20000
     # Number of test characters of text to generate after training the network
-    test_length = 500
+    test_length = 50
 
     # Initialize the network
-    config = tf.ConfigProto()
-    config.gpu_options.allow_growth = True
-    sess = tf.InteractiveSession(config=config)
+    sess = tf.InteractiveSession()
 
     # build rnn
     cost, train_op, xinput, y_batch, lstm_init_value, final_outputs, lstm_last_state, lstm_new_state = build_rnn(in_size, lstm_size, num_layers, out_size, .001)
@@ -170,14 +168,17 @@ def main():
         # restore session with save tensorflow variables
         saver.restore(sess, ckpt_file)
 
-        for x in range(3):
+        while True:
             test_prefix = test_prefix.lower()
             # run each character of the the test_prefix through the nn
             # this is done to start the generation, you need to give it a starting point
             for i in range(len(test_prefix)):
                 out, lstm_last_state = run_step(embed_to_vocab(test_prefix[i], vocab), num_layers,lstm_size,lstm_last_state,final_outputs,lstm_new_state,xinput,lstm_init_value,sess,i == 0)
 
-            print("poem:")
+            print("Poem:")
+            test_prefix = input()
+            if(test_prefix == str(0)):
+                break
             gen_str = test_prefix
             for i in range(test_length):
                 # Sample character from the network according to the generated
