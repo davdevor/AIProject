@@ -126,9 +126,9 @@ def main():
     num_layers = 2
     batch_size = 64
     time_steps = 100
-    training_batches = 20000
+    training_batches = 100000
     # Number of test characters of text to generate after training the network
-    test_length = 50
+    test_length = 200
 
     # Initialize the network
     sess = tf.InteractiveSession()
