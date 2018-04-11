@@ -165,6 +165,7 @@ def main():
                 print("batch: {}  loss: {}  speed: {} batches / s".format(i, cst, 100 / diff))
                 saver.save(sess, ckpt_file)
     else:
+        output = open('generatedpoems.txt','a', encoding='UTF-8')
         # restore session with save tensorflow variables
         saver.restore(sess, ckpt_file)
 
@@ -192,8 +193,9 @@ def main():
                 out, lstm_last_state = run_step(embed_to_vocab(vocab[element], vocab), num_layers,lstm_size,lstm_last_state,final_outputs,lstm_new_state,xinput,lstm_init_value,sess, False)
 
             # the final output string
+            output.write(gen_str+'\n')
             print(gen_str)
-
-
+        output.close()
+    sess.close()
 main()
 
