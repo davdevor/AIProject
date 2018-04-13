@@ -1,5 +1,6 @@
 import time
 import random
+import os
 import numpy as np
 import tensorflow as tf
 
@@ -126,7 +127,7 @@ def main():
     num_layers = 2
     batch_size = 64
     time_steps = 100
-    training_batches = 100000
+    training_batches = 1000
     # Number of test characters of text to generate after training the network
     test_length = 200
 
@@ -139,6 +140,9 @@ def main():
     sess.run(tf.global_variables_initializer())
     saver = tf.train.Saver(tf.global_variables())
     if train:
+        ckpt = tf.train.get_checkpoint_state(os.path.dirname(ckpt_file))
+        if ckpt and ckpt.model_checkpoint_path:
+            saver.restore(sess, ckpt.model_checkpoint_path)
         last_time = time.time()
         # initialize batch to zeros
         batch = np.zeros((batch_size, time_steps, in_size))
@@ -169,7 +173,7 @@ def main():
         # restore session with save tensorflow variables
         saver.restore(sess, ckpt_file)
 
-        while True:
+        for x in range(10):
             test_prefix = test_prefix.lower()
             # run each character of the the test_prefix through the nn
             # this is done to start the generation, you need to give it a starting point
